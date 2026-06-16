@@ -1,0 +1,206 @@
+services:
+
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/docker/portainer:/data
+    ports:
+      - "8095:9000"
+
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: ntfy
+    restart: unless-stopped
+    mem_limit: 128m
+    memswap_limit: 128m
+    ports:
+      - "8094:80"
+    volumes:
+      - ~/docker/ntfy:/var/lib/ntfy
+      - ~/docker/ntfy/server.yml:/etc/ntfy/server.yml:ro
+    command: serve
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    container_name: cadvisor
+    ports:
+      - "8093:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "8092:9090"
+    volumes:
+      - ~/docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ~/docker/prometheus/data:/prometheus
+    user: "65534:65534"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "8091:3000"
+    volumes:
+      - ~/docker/grafana:/var/lib/grafana
+
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    restart: unless-stopped
+    ports:
+      - "8090:3000"
+      - "2222:22"
+    volumes:
+      - ~/docker/gitea:/data
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    restart: unless-stopped
+    mem_limit: 512m
+    memswap_limit: 512m
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      - WEBUI_PORT=8090
+    ports:
+      - "8089:8090"
+      - "6881:6881"
+      - "6881:6881/udp"
+    volumes:
+      - ~/docker/qbittorrent:/config
+      - ~/movies:/movies
+      - ~/shows:/shows
+      - ~/downloads:/downloads
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    ports:
+      - "8088:9696"
+    volumes:
+      - ~/docker/prowlarr:/config
+
+  radarr:
+    image: lscr.io/linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    ports:
+      - "8087:7878"
+    volumes:
+      - ~/docker/radarr:/config
+      - ~/movies:/movies
+      - ~/downloads:/downloads
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    ports:
+      - "8086:8989"
+    volumes:
+      - ~/docker/sonarr:/config
+      - ~/shows:/shows
+      - ~/downloads:/downloads
+
+  uptimekuma:
+    image: louislam/uptime-kuma
+    container_name: uptimekuma
+    restart: unless-stopped
+    mem_limit: 384m
+    memswap_limit: 384m
+    ports:
+      - "8085:3001"
+    volumes:
+      - ~/docker/uptimekuma:/app/data
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    environment:
+      - JELLYFIN_MinRequestBodyDataRate=0
+    ports:
+      - "8084:8096"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/dri/card0:/dev/dri/card0
+    volumes:
+      - ~/docker/jellyfin/config:/config
+      - ~/docker/jellyfin/cache:/cache
+      - ~/movies:/media/movies
+      - ~/shows:/media/shows
+
+  ittools:
+    image: corentinth/it-tools
+    container_name: ittools
+    restart: unless-stopped
+    mem_limit: 64m
+    memswap_limit: 64m
+    ports:
+      - "8083:80"
+
+  gokapi:
+    image: f0rc3/gokapi
+    container_name: gokapi
+    restart: unless-stopped
+    mem_limit: 128m
+    memswap_limit: 128m
+    ports:
+      - "8082:53842"
+    volumes:
+      - ~/docker/gokapi:/app/data
+      - ~/docker/gokapi/config:/app/config
+
+  filebrowser:
+    image: filebrowser/filebrowser
+    container_name: filebrowser
+    restart: unless-stopped
+    mem_limit: 128m
+    memswap_limit: 128m
+    ports:
+      - "8081:80"
+    volumes:
+      - ~:/srv
+      - ~/docker/filebrowser:/database
+
+  
+  homepage:
+    image: ghcr.io/gethomepage/homepage
+    container_name: homepage
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+    ports:
+      - "8000:3000"
+    volumes:
+      - ~/docker/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/docker/homepage/images:/app/public/images
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=your-domain-or-tailscale-hostname
