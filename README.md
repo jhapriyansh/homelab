@@ -62,7 +62,7 @@ Memory usage across all containers stays under 2.5 GiB at idle. Jellyfin peaks o
 
 ## Networking
 
-**Cloudflare Tunnel** runs as a systemd service (`cloudflared`) on the host. It establishes an outbound-only persistent connection to Cloudflare's edge. Incoming traffic on `*.0xpkj.tech` is routed through this tunnel to the appropriate container — no firewall ports are opened, the server's public IP is never exposed.
+**Cloudflare Tunnel** runs as a systemd service (`cloudflared`) on the host. It establishes an outbound-only persistent connection to Cloudflare's edge. Incoming traffic on `*.0xpkj.tech` is routed through this tunnel to the appropriate container no firewall ports are opened, the server's public IP is never exposed.
 
 **Tailscale** creates a WireGuard mesh between my devices. Admin services bind to `0.0.0.0` but are only reachable from within the Tailscale network. The server's Tailscale hostname is `trexible`.
 
@@ -109,5 +109,5 @@ Prometheus runs as uid 65534 (nobody) inside the container. The mounted data dir
 
 - [Cloudflare Tunnel docs](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)
 - [Tailscale docs](https://tailscale.com/kb)
-- [LinuxServer.io images](https://docs.linuxserver.io) — used for Jellyfin, *arr stack
-- [Grafana dashboard 14282](https://grafana.com/grafana/dashboards/14282) — cAdvisor container metrics
+- [LinuxServer.io images](https://docs.linuxserver.io) : used for Jellyfin, *arr stack
+- [Grafana dashboard 14282](https://grafana.com/grafana/dashboards/14282) : cAdvisor container metrics
